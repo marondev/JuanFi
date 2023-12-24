@@ -79,7 +79,7 @@ https://www.paypal.com/paypalme/ivanalayan
 
 There are 2 ways how to upload the software in NodeMCU
 
-#### a.) Install the binary release file, follow this guide on how to flash the bin file https://github.com/ivanalayan15/JuanFi/tree/master/release
+#### a.) Install the binary release file, and follow this guide on how to flash the bin file https://github.com/ivanalayan15/JuanFi/tree/master/release
 
 #### b.) Build and compile the code
 
@@ -93,9 +93,9 @@ https://www.arduino.cc/en/software
 https://randomnerdtutorials.com/how-to-install-esp8266-board-arduino-ide/
 
 
-install dependency libraries at arduino libraries folder 
-* Download this https://github.com/videojedi/ESP8266-Telnet-Client and put it on ardunio library folder
-* From arduino, Go to Tools->Manage Libararies->Seach for LiquidCrystal_I2C and installl
+install dependency libraries in Arduino libraries folder 
+* Download this https://github.com/videojedi/ESP8266-Telnet-Client and put it in Arduino library folder
+* From Arduino, Go to Tools->Manage Libraries->Seach for LiquidCrystal_I2C and install
 
 3.) Compile and upload code
 
@@ -146,11 +146,11 @@ d.) Configure Promo rates
 
 5.) Upload html template to mikrotik in Files option of mikrotik
 
-6.) Create user for nodemcu access, default user for nodemcu is pisonet / abc123 you can change it by your own
+6.) Create user for nodemcu access, default user for nodemcu is pisonet / abc123 you can change it on your own
 ![alt text](https://github.com/ivanalayan15/JuanFi/blob/master/docs/JuanFi-Mikrotik-Step3.PNG?raw=true)
 
 7.) Execute the following script in mikrotik telnet terminal
-replace 10.0.10.253 with your own nodemcu IP address
+replace 10.0.10.253 with your nodemcu IP address
 
 ```bash
 /ip hotspot walled-garden ip add action=accept disabled=no dst-address=10.0.10.253
@@ -158,17 +158,24 @@ replace 10.0.10.253 with your own nodemcu IP address
 ```
 8.) Please add this script in the hotspot user profile on login event(credits to kristoff for adding sales)
 
-Execute on mirkotik terminal
+Execute on mikrotik terminal
 ```bash
-/system scheduler add interval=1d name="Reset Daily Income" on-event="/system script set source=\"0\" todayincome " policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=Sep/28/2021 start-time=00:00:00;
-/system scheduler add interval=30d name="Reset Monthly Income" on-event="/system script set source=\"0\" monthlyincome " policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=Sep/28/2021 start-time=00:00:00;
+/system scheduler add interval=1d name="Reset Daily and Monthly Income" on-event="/system script set source=\"0\" todayincome\r\
+\n\r\
+\n:local date [/system clock get date]\r\
+\n:local day [:pick $date 4 6]\r\
+\n\r\
+\n:if (\$day = \"01\") do={\r\
+\n    /system script set source=\"0\" monthlyincome\r\
+\n}" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=Jan/01/1970 start-time=00:00:00;
+
 /system script add dont-require-permissions=no name=todayincome owner=admin policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source="0";
 /system script add dont-require-permissions=no name= monthlyincome owner=admin policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source="0";
 ```
 
-Put on the on login script (with telegram support) please change accordinly with your hotspot folder(hex or haplite)
+Put on the on login script (with telegram support) please change accordingly with your hotspot folder(hex or haplite)
 ```bash
-### enable telegram notification, change from 0 to 1 if you want to enable telegram
+### Enable telegram notification, change from 0 to 1 if you want to enable telegram
 :local isTelegram 0;
 ###replace telegram token
 :local iTBotToken "xxxxxxxxxx:xxxxxxxxxxxxx-xxxxxxxxxxxxxxx-xxxxx";
@@ -179,9 +186,9 @@ Put on the on login script (with telegram support) please change accordinly with
 ### enable Random MAC synchronizer
 :local isRandomMacSyncFix 0;
 
-### enable JuanFi online monitoring 0 = DoNotSend,  1=send data to api
+### enable JuanFi online monitoring 0 = DoNotSend,  1=send data to API
 :local apiSend 0;
-### derive from the JuanFi online monitoring, create account in genman.projectdorsu.com
+### derive from the JuanFi online monitoring, create an account in genman.projectdorsu.com
 :local URLvendoID 5;
 
 # Get User Data
